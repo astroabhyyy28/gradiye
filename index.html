@@ -31,7 +31,7 @@
     <main class="workspace">
       <header class="topbar">
         <div class="crumb"><button class="icon-button" id="undoBtn" title="Undo (Ctrl/Cmd + Z)">↶</button><button class="icon-button" id="redoBtn" title="Redo (Ctrl/Cmd + Shift + Z)">↷</button><span class="divider"></span><span id="photoName">No photo selected</span></div>
-        <div class="top-actions"><button class="icon-button" id="beforeBtn" title="Hold for before view (\)">◉</button><button class="icon-button" id="splitBtn" title="Toggle split comparison">◫</button><button class="icon-button" id="fitBtn" title="Fit image">⛶</button><button class="export-button" id="exportBtn">⇧ <span>Export</span></button></div>
+        <div class="top-actions"><button class="icon-button zoom-button" id="zoomOutBtn" title="Zoom out">−</button><output class="zoom-value" id="zoomValue" aria-live="polite">100%</output><button class="icon-button zoom-button" id="zoomInBtn" title="Zoom in">+</button><button class="icon-button" id="beforeBtn" title="Hold for before view (\)">◉</button><button class="icon-button" id="splitBtn" title="Toggle split comparison">◫</button><button class="icon-button" id="fitBtn" title="Fit image and reset zoom">⛶</button><button class="export-button" id="exportBtn">⇧ <span>Export</span></button></div>
       </header>
 
       <section class="canvas-area" id="dropzone">
@@ -44,7 +44,7 @@
           <canvas id="previewCanvas" aria-label="Edited photo preview"></canvas>
           <div class="compare-line hidden" id="compareLine"><span></span></div>
           <input class="compare-range hidden" id="compareRange" type="range" min="0" max="100" value="50" aria-label="Before and after split position" />
-          <div class="stage-label" id="stageLabel">Edited preview · Local processing</div>
+          <div class="stage-label" id="stageLabel">Pinch to zoom · drag to pan · Local processing</div>
           <div class="processing hidden" id="processing"><i></i> Rendering grade…</div>
         </div>
       </section>
