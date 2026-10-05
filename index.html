@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Gradiye — a local-first professional photo color grading studio." />
+  <title>Gradiye — Photo Color Studio</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#" aria-label="Gradiye home"><span class="brand-orb"></span><span>GRADIYE<small>COLOR STUDIO</small></span></a>
+      <nav>
+        <button class="nav-item active" data-mode="edit"><span>☷</span> Edit</button>
+        <button class="nav-item" data-mode="presets"><span>▦</span> Presets</button>
+        <button class="nav-item" data-mode="batch"><span>◫</span> Batch</button>
+        <button class="nav-item" data-mode="library"><span>♡</span> Library</button>
+      </nav>
+      <div class="privacy-note"><span>⌁</span><p><b>Private by design</b>Edits stay on this device. AI suggestions use local analysis in this demo.</p></div>
+      <button class="import-button" id="sidebarImport">＋ Import photos</button>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div class="crumb"><button class="icon-button" id="undoBtn" title="Undo (Ctrl/Cmd + Z)">↶</button><button class="icon-button" id="redoBtn" title="Redo (Ctrl/Cmd + Shift + Z)">↷</button><span class="divider"></span><span id="photoName">No photo selected</span></div>
+        <div class="top-actions"><button class="icon-button" id="beforeBtn" title="Hold for before view (\)">◉</button><button class="icon-button" id="splitBtn" title="Toggle split comparison">◫</button><button class="icon-button" id="fitBtn" title="Fit image">⛶</button><button class="export-button" id="exportBtn">⇧ <span>Export</span></button></div>
+      </header>
+
+      <section class="canvas-area" id="dropzone">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-orb">✦</div><h1>Make every frame feel intentional.</h1><p>Drop photos here, paste from your clipboard, or browse your device.</p>
+          <button class="primary-button" id="browseBtn">Choose photos</button><button class="text-button" id="folderBtn">Choose a folder</button>
+          <small>JPG, PNG, WEBP, GIF, BMP, TIFF, AVIF, SVG, HEIC/HEIF &amp; RAW preview supported · up to 50 MB each</small>
+        </div>
+        <div class="image-stage hidden" id="imageStage">
+          <canvas id="previewCanvas" aria-label="Edited photo preview"></canvas>
+          <div class="compare-line hidden" id="compareLine"><span></span></div>
+          <input class="compare-range hidden" id="compareRange" type="range" min="0" max="100" value="50" aria-label="Before and after split position" />
+          <div class="stage-label" id="stageLabel">Edited preview · Local processing</div>
+          <div class="processing hidden" id="processing"><i></i> Rendering grade…</div>
+        </div>
+      </section>
+
+      <section class="filmstrip-wrap">
+        <div class="filmstrip-tools"><span id="selectionCount">0 photos</span><div><button class="small-button" id="copySettings">Copy grade</button><button class="small-button" id="pasteSettings">Paste grade</button><button class="small-button" id="addLabel">Add label</button></div></div>
+        <div class="filmstrip" id="filmstrip" aria-label="Photo filmstrip"></div>
+      </section>
+    </main>
+
+    <aside class="adjustments" aria-label="Photo adjustment controls">
+      <div class="panel-tabs"><button class="panel-tab active" data-panel="adjust">Adjust</button><button class="panel-tab" data-panel="hsl">HSL</button><button class="panel-tab" data-panel="curves">Curves</button><button class="panel-tab" data-panel="grade">Color grade</button></div>
+      <div class="panel-content" id="panelContent">
+        <section class="tool-section" data-section="basic"><div class="section-head"><h2>Basic</h2><button title="Reset Basic">↺</button></div><div id="basicControls"></div></section>
+        <section class="tool-section" data-section="presence"><div class="section-head"><h2>Presence &amp; detail</h2><button title="Reset Presence">↺</button></div><div id="presenceControls"></div></section>
+        <section class="tool-section histogram-section"><div class="section-head"><h2>Histogram</h2><span class="rgb-legend">R G B</span></div><canvas id="histogram" width="300" height="64"></canvas></section>
+        <section class="tool-section ai-section"><div class="section-head"><h2>AI grade</h2><span class="local-chip">LOCAL</span></div><button class="ai-auto" id="autoGrade">✦ Auto Grade</button><textarea id="aiPrompt" rows="2" placeholder="e.g. Make it a moody cinematic night shoot"></textarea><button class="small-button full" id="promptGrade">Generate 3 editable looks</button><div class="ai-variations" id="aiVariations"></div><label class="match-style">Match style <input type="file" id="styleInput" accept="image/*" /></label></section>
+      </div>
+    </aside>
+  </div>
+
+  <input id="fileInput" type="file" multiple accept="image/*,.heic,.heif,.tif,.tiff,.cr2,.cr3,.nef,.arw,.dng,.orf,.raf" hidden />
+  <input id="folderInput" type="file" webkitdirectory multiple hidden />
+  <input id="lutInput" type="file" accept=".cube" hidden />
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="exportDialog"><form method="dialog" class="export-dialog"><button class="close-dialog" value="cancel">×</button><h2>Export your grade</h2><p id="exportCount">One photo ready to export</p><label>Format <select id="exportFormat"><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WEBP</option></select></label><label>Size <select id="exportSize"><option value="original">Original</option><option value="3840">4K (long edge)</option><option value="1920">1080p (long edge)</option><option value="custom">Custom</option></select></label><label id="customSizeWrap" class="hidden">Custom long edge <input id="customSize" type="number" min="320" value="2400" /></label><label>Quality <input id="exportQuality" type="range" min="50" max="100" value="92" /><span id="qualityValue">92%</span></label><label>Filename pattern <input id="filePattern" value="{name}_gradiye" /></label><label class="check"><input id="keepExif" type="checkbox" checked /> Keep EXIF when browser supports it</label><label class="check"><input id="watermarkToggle" type="checkbox" /> Add watermark</label><input id="watermarkText" placeholder="Watermark text" disabled /><button class="primary-button" id="downloadBtn" value="default">Download edited photo</button><small>For multi-select, exports download individually. ZIP export is available when JSZip loads.</small></form></dialog>
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
