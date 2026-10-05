@@ -8,6 +8,11 @@ Gradiye is a zero-backend, local-first single-page photo color-grading studio. O
 - Non-destructive per-photo adjustments, histogram, before view, split slider, unlimited undo/redo, ratings, copy/paste grade, and a thumbnail filmstrip.
 - Curated cinematic and automotive looks, editable local auto-grade and natural-language look suggestions, plus an import surface for `.cube` LUTs.
 - Responsive desktop/mobile dark interface, local session-settings save, accessible labels and tooltips, and JPG/PNG/WEBP export with sizing, quality, watermark, and naming options.
+- A polished Gradiye logo opening animation, with an immediate skip action and automatic reduced-motion fallback.
+
+## Mobile and performance pass
+
+On phones, Gradiye uses a focused stacked layout: compact navigation, large touch targets, a dedicated preview area, a horizontal filmstrip, and a bottom inspector for tools. Slider updates are coalesced to the next display frame, while mobile previews are rendered using a smaller proxy (long edge 1050px) to keep adjustments responsive. Full-resolution pixels are still used when exporting.
 
 ## CDN libraries
 
